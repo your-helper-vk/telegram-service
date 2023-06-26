@@ -1,13 +1,15 @@
 import { bool, cleanEnv, num, str } from 'envalid';
 
 export const envConfig = cleanEnv(process.env, {
+    APP_PORT: num({ default: 3000 }),
+    STAGE: str({ default: 'development' }),
+
     /* TypeORM config*/
-    PORT: num({ default: 3000 }),
     POSTGRES_HOST: str({ default: 'localhost' }),
     POSTGRES_PORT: num({ default: 5500 }),
-    POSTGRES_USERNAME: str({ default: 'pizza_root' }),
-    POSTGRES_PASSWORD: str({ default: '1H1d3e9g' }),
-    POSTGRES_DATABASE: str({ default: 'pizza' }),
+    POSTGRES_USERNAME: str({ default: 'telegram_user' }),
+    POSTGRES_PASSWORD: str({ default: '12345' }),
+    POSTGRES_DATABASE: str({ default: 'telegram' }),
     POSTGRES_SYNCHRONIZE: bool({ default: false }),
     POSTGRES_LOGGING: bool({ default: false }),
     POSTGRES_MAX_QUERY_EXECUTION_TIME: num({ default: 1000 }),

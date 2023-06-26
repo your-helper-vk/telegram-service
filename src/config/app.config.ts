@@ -19,4 +19,6 @@ export const appConfig = {
             migrationsRun: env.POSTGRES_MIGRATIONS_RUN,
         };
     },
+
+    AXIOS_DEFAULT_TIMEOUT: 5000,
 };
