@@ -2,14 +2,14 @@ import { ApplicationDto } from '@common/dto/application.dto';
 import { Expose } from 'class-transformer';
 import { IsNumber, IsUUID } from 'class-validator';
 
-import { UserID } from '../domain/user.domain';
+import { TelegramUserID } from '../domain/telegram-user.domain';
 
-export class CreateUserDto extends ApplicationDto {
+export class CreateTelegramUserDto extends ApplicationDto {
     @IsUUID()
     @Expose()
-    id: UserID;
+    id: TelegramUserID;
 
     @IsNumber()
     @Expose()
-    userIdInTelegram: number;
+    TelegramUserIDInTelegram: number;
 }

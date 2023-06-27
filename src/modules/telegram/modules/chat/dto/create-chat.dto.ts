@@ -2,7 +2,7 @@ import { ApplicationDto } from '@common/dto/application.dto';
 import { Expose } from 'class-transformer';
 import { IsNumber, IsUUID } from 'class-validator';
 
-import { UserID } from '../../user/domain/user.domain';
+import { TelegramUserID } from '../../user/domain/user.domain';
 import { ChatID } from '../domain/chat.domain';
 
 export class CreateChatDto extends ApplicationDto {
@@ -16,5 +16,5 @@ export class CreateChatDto extends ApplicationDto {
 
     @IsUUID()
     @Expose()
-    userID: UserID;
+    TelegramUserID: TelegramUserID;
 }

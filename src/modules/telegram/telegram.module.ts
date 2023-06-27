@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { ChatService } from './modules/chat/chat.service';
-import { UserService } from './modules/user/user.service';
+import { TelegramUserService } from './modules/telegram-user/telegram-user.service';
 import { TelegramController } from './telegram.controller';
 import { TelegramService } from './telegram.service';
 
@@ -11,7 +11,7 @@ import { TelegramService } from './telegram.service';
     providers: [
         ChatService,
         TelegramService,
-        UserService,
+        TelegramUserService,
     ],
     exports: [TelegramService],
 })
