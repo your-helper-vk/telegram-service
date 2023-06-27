@@ -5,15 +5,15 @@ import { BotCommand, Message } from 'node-telegram-bot-api';
 import { ChatService } from './modules/chat/chat.service';
 import { ChatID } from './modules/chat/domain/chat.domain';
 import { CreateChatDto } from './modules/chat/dto/create-chat.dto';
-import { TelegramUserID } from './modules/user/domain/user.domain';
-import { CreateTelegramUserDto } from './modules/user/dto/create-user.dto';
-import { TelegramUserService } from './modules/user/user.service';
+import { TelegramUserID } from './modules/telegram-user/domain/telegram-user.domain';
+import { CreateTelegramUserDto } from './modules/telegram-user/dto/create-user.dto';
+import { TelegramUserService } from './modules/telegram-user/telegram-user.service';
 import { telegramBot } from './telegram.bot';
 
 @Injectable()
 export class TelegramService {
     constructor(
-        private readonly TelegramUserService: TelegramUserService,
+        private readonly telegramUserService: TelegramUserService,
         private readonly chatService: ChatService,
     ) {
         this.initialize();
@@ -28,14 +28,14 @@ export class TelegramService {
 
             switch (message) {
                 case '/start':
-                    const user = await this.TelegramUserService.findOneByTelegramUserIDInTelegram(TelegramUserIDInTelegram);
+                    const user = await this.telegramUserService.findOneByTelegramUserIDInTelegram(TelegramUserIDInTelegram);
 
                     if (!user) {
                         const userInput = await validateDto(CreateTelegramUserDto, {
                             id: TelegramUserID.new(),
                             TelegramUserIDInTelegram,
                         });
-                        const newUser = await this.TelegramUserService.create(userInput);
+                        const newUser = await this.telegramUserService.create(userInput);
 
                         const chatInput = await validateDto(CreateChatDto, {
                             id: ChatID.new(),

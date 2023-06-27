@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
 
-import { TelegramUserService } from '../user/user.service';
+import { TelegramUserService } from '../telegram-user/telegram-user.service';
 import { ChatEntity } from './domain/chat.entity';
 import { CreateChatDto } from './dto/create-chat.dto';
 
@@ -10,7 +10,7 @@ import { CreateChatDto } from './dto/create-chat.dto';
 export class ChatService {
     constructor(
         @InjectEntityManager() private readonly em: EntityManager,
-        private readonly TelegramUserService: TelegramUserService,
+        private readonly telegramUserService: TelegramUserService,
     ) { }
 
     /**
@@ -25,7 +25,7 @@ export class ChatService {
             throw new BadRequestException('Chat already exists');
         }
 
-        const user = await this.TelegramUserService.findOneById(dto.TelegramUserID);
+        const user = await this.telegramUserService.findOneById(dto.TelegramUserID);
 
         if (!user) {
             throw new BadRequestException('User not found');
