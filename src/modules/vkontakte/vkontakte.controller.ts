@@ -1,7 +1,7 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
 
-import { FriendsGetResponseDto } from './dto/friends-get-response.dto';
+import { VkontakteFriendsGetResponseDto } from './dto/vkontakte-friends-get-response.dto';
 import { VkontakteGetUsersDto } from './dto/vkontakte-get-users.dto';
 import { VkontakteUserDto } from './dto/vkontakte-user.dto';
 import { VkontakteService } from './vkontakte.service';
@@ -21,8 +21,8 @@ export class VkontakteController {
             'nickname',
         ],
     })
-    @ApiOkResponse({ type: FriendsGetResponseDto })
-    getFriends(@Param('userID') userID: number, @Query('fields') fields: string[]): Promise<FriendsGetResponseDto> {
+    @ApiOkResponse({ type: VkontakteFriendsGetResponseDto })
+    getFriends(@Param('userID') userID: number, @Query('fields') fields: string[]): Promise<VkontakteFriendsGetResponseDto> {
         return this.vkontakteService.getFriends(userID, fields);
     }
 

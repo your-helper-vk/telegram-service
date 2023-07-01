@@ -4,7 +4,7 @@ import { IsArray, ValidateNested } from 'class-validator';
 
 import { VkontakteUserDto } from './vkontakte-user.dto';
 
-export class FriendsGetResponseDto {
+export class VkontakteFriendsGetResponseDto {
     @ApiProperty({ type: [VkontakteUserDto] })
     @IsArray()
     @Type(() => VkontakteUserDto)

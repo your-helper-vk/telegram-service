@@ -2,7 +2,7 @@ import { envConfig } from '@config/env.config';
 import { Injectable } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 
-import { FriendsGetResponseDto } from './dto/friends-get-response.dto';
+import { VkontakteFriendsGetResponseDto } from './dto/vkontakte-friends-get-response.dto';
 import { VkontakteUserDto } from './dto/vkontakte-user.dto';
 import { VkontakteClient } from './vkontakte.client';
 
@@ -23,8 +23,8 @@ export class VkontakteService {
      * https://dev.vk.com/method/friends.get#%D0%9F%D0%B0%D1%80%D0%B0%D0%BC%D0%B5%D1%82%D1%80%D1%8B
      * @returns Список пользователей ВК
      */
-    async getFriends(userID: number, fields: string[]): Promise<FriendsGetResponseDto> {
-        const { response } = await this.vkontakteClient.sendRequest<{ response: FriendsGetResponseDto }>(
+    async getFriends(userID: number, fields: string[]): Promise<VkontakteFriendsGetResponseDto> {
+        const { response } = await this.vkontakteClient.sendRequest<{ response: VkontakteFriendsGetResponseDto }>(
             'friends.get',
             HttpMethod.GET,
             {
@@ -39,7 +39,7 @@ export class VkontakteService {
             }
         );
 
-        return plainToInstance(FriendsGetResponseDto, response, { excludeExtraneousValues: true });
+        return plainToInstance(VkontakteFriendsGetResponseDto, response, { excludeExtraneousValues: true });
     }
 
     /**
