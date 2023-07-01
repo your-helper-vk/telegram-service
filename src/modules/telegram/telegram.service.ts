@@ -21,6 +21,10 @@ export class TelegramService {
 
     initialize(): void {
         this.initializeCommand();
+        this.initializeTelegram();
+    }
+
+    initializeTelegram(): void {
         telegramBot.on('message', async (messageInfo: Message) => {
             const message = messageInfo.text;
             const chatIdInTelegram = messageInfo.chat.id;

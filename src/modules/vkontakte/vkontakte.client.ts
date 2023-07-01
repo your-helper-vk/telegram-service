@@ -3,17 +3,15 @@ import { envConfig } from '@config/env.config';
 import { Injectable } from '@nestjs/common';
 import Axios, { AxiosInstance, Method } from 'axios';
 
-export type SendRequestParams = {
-    params?: Record<string, unknown>;
-}
+import { SendRequestParams } from '../telegram/telegram.client';
 
 @Injectable()
-export class TelegramClient {
+export class VkontakteClient {
     private readonly client: AxiosInstance;
 
     constructor() {
         this.client = Axios.create({
-            baseURL: envConfig.TG_BOT_API + envConfig.TG_BOT_TOKEN,
+            baseURL: envConfig.VK_API,
             timeout: appConfig.AXIOS_DEFAULT_TIMEOUT,
         });
     }
