@@ -28,16 +28,16 @@ export class TelegramService {
         telegramBot.on('message', async (messageInfo: Message) => {
             const message = messageInfo.text;
             const chatIdInTelegram = messageInfo.chat.id;
-            const TelegramUserIDInTelegram = messageInfo.from.id;
+            const userIDInTelegram = messageInfo.from.id;
 
             switch (message) {
                 case '/start':
-                    const user = await this.telegramUserService.findOneByTelegramUserIDInTelegram(TelegramUserIDInTelegram);
+                    const user = await this.telegramUserService.findOneByUserIDInTelegram(userIDInTelegram);
 
                     if (!user) {
                         const userInput = await validateDto(CreateTelegramUserDto, {
                             id: TelegramUserID.new(),
-                            TelegramUserIDInTelegram,
+                            userIDInTelegram,
                         });
                         const newUser = await this.telegramUserService.create(userInput);
 

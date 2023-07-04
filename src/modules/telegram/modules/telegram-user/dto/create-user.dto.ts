@@ -11,5 +11,5 @@ export class CreateTelegramUserDto extends ApplicationDto {
 
     @IsNumber()
     @Expose()
-    TelegramUserIDInTelegram: number;
+    userIDInTelegram: number;
 }

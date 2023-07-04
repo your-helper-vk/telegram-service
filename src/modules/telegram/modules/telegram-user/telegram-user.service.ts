@@ -17,7 +17,7 @@ export class TelegramUserService {
      * @returns A Promise that resolves to a TelegramUserEntity object.
      */
     async create(dto: CreateTelegramUserDto): Promise<TelegramUserEntity> {
-        const oldUser = await this.findOneByTelegramUserIDInTelegram(dto.TelegramUserIDInTelegram);
+        const oldUser = await this.findOneByUserIDInTelegram(dto.userIDInTelegram);
 
         if (oldUser) {
             throw new BadRequestException('Telegram user already exists');
@@ -30,14 +30,14 @@ export class TelegramUserService {
 
     /**
      * This function returns a promise that resolves to a TelegramUserEntity object or null based on the
-     * provided TelegramUserIDInTelegram.
-     * @param {number} TelegramUserIDInTelegram - The parameter `TelegramUserIDInTelegram` is a number that
+     * provided userIDInTelegram.
+     * @param {number} userIDInTelegram - The parameter `userIDInTelegram` is a number that
      * represents the unique identifier of a user in the Telegram messaging app.
      * @returns A Promise that resolves to either a TelegramUserEntity object with the specified
-     * TelegramUserIDInTelegram or null if no such user exists.
+     * userIDInTelegram or null if no such user exists.
      */
-    findOneByTelegramUserIDInTelegram(TelegramUserIDInTelegram: number): Promise<TelegramUserEntity | null> {
-        return this.em.findOneBy(TelegramUserEntity, { TelegramUserIDInTelegram });
+    findOneByUserIDInTelegram(userIDInTelegram: number): Promise<TelegramUserEntity | null> {
+        return this.em.findOneBy(TelegramUserEntity, { userIDInTelegram });
     }
 
     /**
