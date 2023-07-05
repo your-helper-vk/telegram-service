@@ -3,12 +3,12 @@ import { Expose } from 'class-transformer';
 import { IsNumber, IsUUID } from 'class-validator';
 
 import { TelegramUserID } from '../../telegram-user/domain/telegram-user.domain';
-import { ChatID } from '../domain/chat.domain';
+import { TelegramChatID } from '../domain/telegram-chat.domain';
 
-export class CreateChatDto extends ApplicationDto {
+export class CreateTelegramChatDto extends ApplicationDto {
     @IsUUID()
     @Expose()
-    id: ChatID;
+    id: TelegramChatID;
 
     @IsNumber()
     @Expose()

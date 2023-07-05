@@ -2,9 +2,9 @@ import { validateDto } from '@common/operations/validate-dto.operation';
 import { Injectable } from '@nestjs/common';
 import { BotCommand, Message } from 'node-telegram-bot-api';
 
-import { ChatService } from './modules/chat/chat.service';
-import { ChatID } from './modules/chat/domain/chat.domain';
-import { CreateChatDto } from './modules/chat/dto/create-chat.dto';
+import { TelegramChatID } from './modules/telegram-chat/domain/telegram-chat.domain';
+import { CreateTelegramChatDto } from './modules/telegram-chat/dto/create-telegram-chat.dto';
+import { TelegramChatService } from './modules/telegram-chat/telegram-chat.service';
 import { TelegramUserID } from './modules/telegram-user/domain/telegram-user.domain';
 import { CreateTelegramUserDto } from './modules/telegram-user/dto/create-user.dto';
 import { TelegramUserService } from './modules/telegram-user/telegram-user.service';
@@ -14,7 +14,7 @@ import { telegramBot } from './telegram.bot';
 export class TelegramService {
     constructor(
         private readonly telegramUserService: TelegramUserService,
-        private readonly chatService: ChatService,
+        private readonly telegramChatService: TelegramChatService,
     ) {
         this.initialize();
     }
@@ -41,12 +41,12 @@ export class TelegramService {
                         });
                         const newUser = await this.telegramUserService.create(userInput);
 
-                        const chatInput = await validateDto(CreateChatDto, {
-                            id: ChatID.new(),
+                        const chatInput = await validateDto(CreateTelegramChatDto, {
+                            id: TelegramChatID.new(),
                             chatIdInTelegram,
                             TelegramUserID: newUser.id,
                         });
-                        await this.chatService.create(chatInput);
+                        await this.telegramChatService.create(chatInput);
                     } else {
                         await this.sendMessage(chatIdInTelegram, 'Пользователь уже сохранён.');
                     }

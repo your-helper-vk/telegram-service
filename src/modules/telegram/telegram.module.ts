@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { ChatService } from './modules/chat/chat.service';
+import { TelegramChatService } from './modules/telegram-chat/telegram-chat.service';
 import { TelegramUserService } from './modules/telegram-user/telegram-user.service';
 import { TelegramController } from './telegram.controller';
 import { TelegramService } from './telegram.service';
@@ -9,7 +9,7 @@ import { TelegramService } from './telegram.service';
     imports: [],
     controllers: [TelegramController],
     providers: [
-        ChatService,
+        TelegramChatService,
         TelegramService,
         TelegramUserService,
     ],
