@@ -2,11 +2,12 @@ import { validateDto } from '@common/operations/validate-dto.operation';
 import { Injectable } from '@nestjs/common';
 import { BotCommand, Message } from 'node-telegram-bot-api';
 
+import { TelegramMessage } from './constants/telegram';
 import { TelegramChatID } from './modules/telegram-chat/domain/telegram-chat.domain';
 import { CreateTelegramChatDto } from './modules/telegram-chat/dto/create-telegram-chat.dto';
 import { TelegramChatService } from './modules/telegram-chat/telegram-chat.service';
 import { TelegramUserID } from './modules/telegram-user/domain/telegram-user.domain';
-import { CreateTelegramUserDto } from './modules/telegram-user/dto/create-user.dto';
+import { CreateTelegramUserDto } from './modules/telegram-user/dto/create-telegram-user.dto';
 import { TelegramUserService } from './modules/telegram-user/telegram-user.service';
 import { telegramBot } from './telegram.bot';
 
@@ -27,47 +28,41 @@ export class TelegramService {
     initializeTelegram(): void {
         telegramBot.on('message', async (messageInfo: Message) => {
             const message = messageInfo.text;
-            const chatIdInTelegram = messageInfo.chat.id;
+            const chatIDInTelegram = messageInfo.chat.id;
             const userIDInTelegram = messageInfo.from.id;
 
+            let resultMessage = TelegramMessage.UNDEFINED_COMMAND;
             switch (message) {
                 case '/start':
-                    const user = await this.telegramUserService.findOneByUserIDInTelegram(userIDInTelegram);
-
-                    if (!user) {
-                        const userInput = await validateDto(CreateTelegramUserDto, {
-                            id: TelegramUserID.new(),
-                            userIDInTelegram,
-                        });
-                        const newUser = await this.telegramUserService.create(userInput);
-
-                        const chatInput = await validateDto(CreateTelegramChatDto, {
-                            id: TelegramChatID.new(),
-                            chatIdInTelegram,
-                            TelegramUserID: newUser.id,
-                        });
-                        await this.telegramChatService.create(chatInput);
-                    } else {
-                        await this.sendMessage(chatIdInTelegram, 'Пользователь уже сохранён.');
-                    }
+                    resultMessage = await this.startCommand(userIDInTelegram, chatIDInTelegram);
             }
 
-            telegramBot.sendMessage(chatIdInTelegram, 'Welcome', {
-                // eslint-disable-next-line camelcase
-                reply_markup: {
-                    keyboard: [
-                        [
-                            { text: 'Добавить пользователя к отслеживанию' },
-                            { text: 'Удалить пользователя из отслеживания' },
-                        ],
-                        [
-                            { text: 'Информация о боте' },
-                            { text: 'Об авторе' },
-                        ],
-                    ],
-                },
-            });
+
+            await this.sendMessage(chatIDInTelegram, resultMessage);
         });
+    }
+
+    async startCommand(userIDInTelegram: number, chatIDInTelegram: number): Promise<string> {
+        const user = await this.telegramUserService.findOneByUserIDInTelegram(userIDInTelegram);
+
+        if (!user) {
+            const userInput = await validateDto(CreateTelegramUserDto, {
+                id: TelegramUserID.new(),
+                userIDInTelegram,
+            });
+            const newUser = await this.telegramUserService.create(userInput);
+
+            const chatInput = await validateDto(CreateTelegramChatDto, {
+                id: TelegramChatID.new(),
+                chatIDInTelegram,
+                telegramUserID: newUser.id,
+            });
+            await this.telegramChatService.create(chatInput);
+
+            return TelegramMessage.INITIALIZE;
+        }
+
+        return TelegramMessage.USER_ALREADY_EXIST;
     }
 
     async initializeCommand(): Promise<void> {
@@ -80,6 +75,7 @@ export class TelegramService {
     }
 
     sendMessage(chatID: number, message: string): Promise<Message> {
-        return telegramBot.sendMessage(chatID, message);
+        // eslint-disable-next-line camelcase
+        return telegramBot.sendMessage(chatID, message, { parse_mode: 'MarkdownV2' });
     }
 }

@@ -12,9 +12,9 @@ export class CreateTelegramChatDto extends ApplicationDto {
 
     @IsNumber()
     @Expose()
-    chatIdInTelegram: number;
+    chatIDInTelegram: number;
 
     @IsUUID()
     @Expose()
-    TelegramUserID: TelegramUserID;
+    telegramUserID: TelegramUserID;
 }

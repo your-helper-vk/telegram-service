@@ -4,7 +4,7 @@ import { EntityManager } from 'typeorm';
 
 import { TelegramUserID } from './domain/telegram-user.domain';
 import { TelegramUserEntity } from './domain/telegram-user.entity';
-import { CreateTelegramUserDto } from './dto/create-user.dto';
+import { CreateTelegramUserDto } from './dto/create-telegram-user.dto';
 
 @Injectable()
 export class TelegramUserService {

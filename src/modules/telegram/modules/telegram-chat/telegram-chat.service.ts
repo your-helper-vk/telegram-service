@@ -19,13 +19,13 @@ export class TelegramChatService {
      * @returns A Promise that resolves to a TelegramChatEntity object.
      */
     async create(dto: CreateTelegramChatDto): Promise<TelegramChatEntity> {
-        const oldChat = await this.em.findOneBy(TelegramChatEntity, { chatIdInTelegram: dto.chatIdInTelegram });
+        const oldChat = await this.em.findOneBy(TelegramChatEntity, { chatIdInTelegram: dto.chatIDInTelegram });
 
         if (oldChat) {
             throw new BadRequestException('Chat already exists');
         }
 
-        const user = await this.telegramUserService.findOneById(dto.TelegramUserID);
+        const user = await this.telegramUserService.findOneById(dto.telegramUserID);
 
         if (!user) {
             throw new BadRequestException('User not found');
@@ -33,7 +33,7 @@ export class TelegramChatService {
 
         const newChat = this.em.create(TelegramChatEntity, {
             id: dto.id,
-            chatIdInTelegram: dto.chatIdInTelegram,
+            chatIdInTelegram: dto.chatIDInTelegram,
             user,
         });
 
