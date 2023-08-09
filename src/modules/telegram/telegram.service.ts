@@ -1,5 +1,8 @@
 import { validateDto } from '@common/operations/validate-dto.operation';
 import { Injectable } from '@nestjs/common';
+import { VkontakteUserID } from '@vkontakte/modules/vkontakte-user/domain/vkontakte-user.domain';
+import { VkontakteUserService } from '@vkontakte/modules/vkontakte-user/vkontakte-user.service';
+import { VkontakteService } from '@vkontakte/vkontakte.service';
 import { BotCommand, Message } from 'node-telegram-bot-api';
 
 import { TelegramMessage } from './constants/telegram';
@@ -16,6 +19,8 @@ export class TelegramService {
     constructor(
         private readonly telegramUserService: TelegramUserService,
         private readonly telegramChatService: TelegramChatService,
+        private readonly vkontakteUserService: VkontakteUserService,
+        private readonly vkontakteService: VkontakteService,
     ) {
         this.initialize();
     }
@@ -35,8 +40,15 @@ export class TelegramService {
             switch (message) {
                 case '/start':
                     resultMessage = await this.startCommand(userIDInTelegram, chatIDInTelegram);
-            }
+                    break;
+                default:
+                    if (message.includes('/add')) {
+                        const nickname = message.substring(message.lastIndexOf('/') + 1);
 
+                        resultMessage = await this.addUserToTracking(chatIDInTelegram, userIDInTelegram, nickname);
+                    }
+                    break;
+            }
 
             await this.sendMessage(chatIDInTelegram, resultMessage);
         });
@@ -60,6 +72,42 @@ export class TelegramService {
             await this.telegramChatService.create(chatInput);
 
             return TelegramMessage.INITIALIZE;
+        }
+
+        return TelegramMessage.USER_ALREADY_EXIST;
+    }
+
+    async addUserToTracking(chatIDInTelegram: number, userIDInTelegram: number, vkNickname: string): Promise<string> {
+        const chat = await this.telegramChatService.findOneByChatIdInTelegram(chatIDInTelegram);
+
+        if (!chat) {
+            return TelegramMessage.CHAT_NOT_FOUND;
+        }
+
+        const telegramUser = await this.telegramUserService.findOneByUserIDInTelegram(userIDInTelegram);
+
+        if (!telegramUser) {
+            return TelegramMessage.CHAT_NOT_FOUND;
+        }
+
+        const vkontakteUser = await this.vkontakteUserService.findOneByNickName(vkNickname);
+
+        if (!vkontakteUser) {
+            const user = await this.vkontakteService.getUser(vkNickname);
+
+            await this.vkontakteUserService.create({
+                id: VkontakteUserID.new(),
+                userIDInVkontakte: user.id,
+                bdate: user.bdate,
+                canAccessClosed: user.canAccessClosed,
+                firstName: user.firstName,
+                isClosed: user.isClosed,
+                lastName: user.lastName,
+                nickname: user.nickname,
+                sex: user.sex,
+            });
+
+            return TelegramMessage.USER_SUCCESSFULLY_ADDED;
         }
 
         return TelegramMessage.USER_ALREADY_EXIST;

@@ -1,7 +1,7 @@
 import { ApplicationEntity } from '@common/entity/application.entity';
-import { Column, Entity, OneToMany } from 'typeorm';
+import { TelegramUserEntity } from 'src/modules/telegram/modules/telegram-user/domain/telegram-user.entity';
+import { Column, Entity, JoinTable, ManyToMany } from 'typeorm';
 
-import { VkontakteFriendEntity } from '../../vkontakte-friend/domain/vkontakte-friend.entity';
 import { VkontakteUserID } from './vkontakte-user.domain';
 
 @Entity({ name: 'vkontakte_users' })
@@ -30,9 +30,17 @@ export class VkontakteUserEntity extends ApplicationEntity<VkontakteUserID> {
     @Column({ name: 'can_access_closed', nullable: true })
     canAccessClosed?: boolean;
 
-    @OneToMany(() => VkontakteFriendEntity, vkontakteFriend => vkontakteFriend.vkontakteUser)
-    followers: VkontakteFriendEntity[];
+    @ManyToMany(() => VkontakteUserEntity, vkontakteUser => vkontakteUser.following)
+    @JoinTable({
+        name: 'vkontakte_friends',
+        joinColumn: { name: 'vkontakte_user_id', referencedColumnName: 'id' },
+        inverseJoinColumn: { name: 'vkontakte_friend_user_id', referencedColumnName: 'id' },
+    })
+    followers: VkontakteUserEntity[];
 
-    @OneToMany(() => VkontakteFriendEntity, vkontakteFriend => vkontakteFriend.vkontakteFriend)
-    following: VkontakteFriendEntity[];
+    @ManyToMany(() => VkontakteUserEntity, vkontakteUser => vkontakteUser.followers)
+    following: VkontakteUserEntity[];
+
+    @ManyToMany(() => VkontakteUserEntity, vkontakteUser => vkontakteUser.trackedTelegramUsers)
+    trackedTelegramUsers: TelegramUserEntity[];
 }

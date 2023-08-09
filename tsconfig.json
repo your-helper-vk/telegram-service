@@ -21,7 +21,9 @@
     "rootDirs": ["src", "test"],
     "paths": {
       "@common/*": ["src/common/*"],
-      "@config/*": ["src/config/*"]
+      "@config/*": ["src/config/*"],
+      "@vkontakte/*": ["src/modules/vkontakte/*"],
+      "@telegram/*": ["src/modules/telegram/*"]
     }
   }
 }

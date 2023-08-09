@@ -8,7 +8,9 @@ import { CreateVkontakteUserDto } from './dto/create-vkontakte-user.dto';
 
 @Injectable()
 export class VkontakteUserService {
-    constructor(@InjectEntityManager() private readonly em: EntityManager) { }
+    constructor(
+        @InjectEntityManager() private readonly em: EntityManager,
+    ) { }
 
     /**
      * The function creates a new Vkontakte user entity after validating the input and checking if the
@@ -40,5 +42,16 @@ export class VkontakteUserService {
      */
     findOneByUserIDInVkontakte(userIDInVkontakte: number): Promise<VkontakteUserEntity | null> {
         return this.em.findOneBy(VkontakteUserEntity, { userIDInVkontakte });
+    }
+
+    /**
+     * The function `findOneByNickName` returns a promise that resolves to a `VkontakteUserEntity`
+     * object or `null` based on the provided nickname.
+     * @param {string} nickname - The `nickname` parameter is a string that represents the nickname of
+     * a user.
+     * @returns a Promise that resolves to either a VkontakteUserEntity object or null.
+     */
+    findOneByNickName(nickname: string): Promise<VkontakteUserEntity | null> {
+        return this.em.findOneBy(VkontakteUserEntity, { nickname });
     }
 }

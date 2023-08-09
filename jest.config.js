@@ -17,5 +17,7 @@ module.exports = {
     moduleNameMapper: {
         '@common/(.*)': '<rootDir>/src/common/$1',
         '@config/(.*)': '<rootDir>/src/config/$1',
+        '@vkontakte/(.*)': '<rootDir>/src/modules/vkontakte/$1',
+        '@telegram/(.*)': '<rootDir>/src/modules/telegram/$1',
     },
 };

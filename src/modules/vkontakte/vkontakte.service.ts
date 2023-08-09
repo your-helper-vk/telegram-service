@@ -13,7 +13,9 @@ export enum HttpMethod {
 
 @Injectable()
 export class VkontakteService {
-    constructor(private readonly vkontakteClient: VkontakteClient) { }
+    constructor(
+        private readonly vkontakteClient: VkontakteClient,
+    ) { }
 
     // TODO: Доработать обработку ошибок из ВК, желательно в клиенте
     /**
@@ -49,7 +51,11 @@ export class VkontakteService {
      * https://dev.vk.com/method/friends.get#%D0%9F%D0%B0%D1%80%D0%B0%D0%BC%D0%B5%D1%82%D1%80%D1%8B
      * @returns Список пользователей ВК
      */
-    async getUsers(userIDs: string[] | number[], fields: string[]): Promise<VkontakteUserDto[]> {
+    async getUsers(userIDs: (string | number)[], fields: string[] = [
+        'bdate',
+        'sex',
+        'nickname',
+    ]): Promise<VkontakteUserDto[]> {
         const { response } = await this.vkontakteClient.sendRequest<{ response: VkontakteUserDto[] }>(
             'users.get',
             HttpMethod.GET,
@@ -66,5 +72,22 @@ export class VkontakteService {
         );
 
         return plainToInstance(VkontakteUserDto, response, { excludeExtraneousValues: true });
+    }
+
+    /**
+    * Возвращает расширенную информацию о пользователях ВК.
+    * @param userID идентификатор пользователя или короткое имя.
+    * @param fields Список дополнительных полей, которые необходимо вернуть. Подробнее тут
+    * https://dev.vk.com/method/friends.get#%D0%9F%D0%B0%D1%80%D0%B0%D0%BC%D0%B5%D1%82%D1%80%D1%8B
+    * @returns Пользователь ВК
+    */
+    async getUser(userId: string | number, fields: string[] = [
+        'bdate',
+        'sex',
+        'nickname',
+    ]): Promise<VkontakteUserDto> {
+        const users = await this.getUsers([userId], fields);
+
+        return users.pop();
     }
 }

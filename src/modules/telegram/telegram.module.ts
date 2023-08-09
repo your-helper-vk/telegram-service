@@ -1,16 +1,21 @@
 import { Module } from '@nestjs/common';
+import { VkontakteModule } from '@vkontakte/vkontakte.module';
 
 import { TelegramChatService } from './modules/telegram-chat/telegram-chat.service';
+import { TelegramTrackedVkUserService } from './modules/telegram-tracked-user/telegram-tracked-vk-user.service';
 import { TelegramUserService } from './modules/telegram-user/telegram-user.service';
 import { TelegramController } from './telegram.controller';
 import { TelegramService } from './telegram.service';
 
 @Module({
-    imports: [],
+    imports: [
+        VkontakteModule,
+    ],
     controllers: [TelegramController],
     providers: [
-        TelegramChatService,
         TelegramService,
+        TelegramChatService,
+        TelegramTrackedVkUserService,
         TelegramUserService,
     ],
     exports: [TelegramService],
