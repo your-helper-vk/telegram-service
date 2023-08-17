@@ -19,6 +19,7 @@ export class VkontakteController {
             'bdate',
             'sex',
             'nickname',
+            'screen_name',
         ],
     })
     @ApiOkResponse({ type: VkontakteFriendsGetResponseDto })

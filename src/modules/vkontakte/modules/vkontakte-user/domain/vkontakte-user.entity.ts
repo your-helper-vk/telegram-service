@@ -24,6 +24,9 @@ export class VkontakteUserEntity extends ApplicationEntity<VkontakteUserID> {
     @Column({ nullable: true })
     nickname?: string;
 
+    @Column({ name: 'screen_name', nullable: true })
+    screenName?: string;
+
     @Column({ type: 'int', nullable: true })
     sex?: number;
 

@@ -43,9 +43,9 @@ export class TelegramService {
                     break;
                 default:
                     if (message.includes('/add')) {
-                        const nickname = message.substring(message.lastIndexOf('/') + 1);
+                        const screenName = message.split(' ').pop();
 
-                        resultMessage = await this.addUserToTracking(chatIDInTelegram, userIDInTelegram, nickname);
+                        resultMessage = await this.addUserToTracking(chatIDInTelegram, userIDInTelegram, screenName);
                     }
                     break;
             }
@@ -77,7 +77,7 @@ export class TelegramService {
         return TelegramMessage.USER_ALREADY_EXIST;
     }
 
-    async addUserToTracking(chatIDInTelegram: number, userIDInTelegram: number, vkNickname: string): Promise<string> {
+    async addUserToTracking(chatIDInTelegram: number, userIDInTelegram: number, screenName: string): Promise<string> {
         const chat = await this.telegramChatService.findOneByChatIdInTelegram(chatIDInTelegram);
 
         if (!chat) {
@@ -90,10 +90,14 @@ export class TelegramService {
             return TelegramMessage.CHAT_NOT_FOUND;
         }
 
-        const vkontakteUser = await this.vkontakteUserService.findOneByNickName(vkNickname);
+        const vkontakteUser = await this.vkontakteUserService.findOneByScreenName(screenName);
 
         if (!vkontakteUser) {
-            const user = await this.vkontakteService.getUser(vkNickname);
+            const user = await this.vkontakteService.getUser(screenName);
+
+            if (!user) {
+                return TelegramMessage.USER_NOT_FOUND;
+            }
 
             await this.vkontakteUserService.create({
                 id: VkontakteUserID.new(),
@@ -104,6 +108,7 @@ export class TelegramService {
                 isClosed: user.isClosed,
                 lastName: user.lastName,
                 nickname: user.nickname,
+                screenName: user.screenName,
                 sex: user.sex,
             });
 

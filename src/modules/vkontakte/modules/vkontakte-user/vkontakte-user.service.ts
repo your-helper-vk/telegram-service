@@ -1,4 +1,3 @@
-import { validateDto } from '@common/operations/validate-dto.operation';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
@@ -20,17 +19,15 @@ export class VkontakteUserService {
      * @returns a Promise that resolves to a VkontakteUserEntity object.
      */
     async create(dto: CreateVkontakteUserDto): Promise<VkontakteUserEntity> {
-        const input = await validateDto(CreateVkontakteUserDto, dto);
-
-        const oldVkUser = await this.findOneByUserIDInVkontakte(input.userIDInVkontakte);
+        const oldVkUser = await this.findOneByUserIDInVkontakte(dto.userIDInVkontakte);
 
         if (oldVkUser) {
             throw new BadRequestException('Vkontakte user already exists');
         }
 
-        const newVkUser = this.em.create(VkontakteUserEntity, { ...input });
+        const newVkUser = this.em.create(VkontakteUserEntity, { ...dto });
 
-        return this.em.create(VkontakteUserEntity, newVkUser);
+        return this.em.save(VkontakteUserEntity, newVkUser);
     }
 
     /**
@@ -53,5 +50,15 @@ export class VkontakteUserService {
      */
     findOneByNickName(nickname: string): Promise<VkontakteUserEntity | null> {
         return this.em.findOneBy(VkontakteUserEntity, { nickname });
+    }
+
+    /**
+     * The function `findOneByScreenName` returns a promise that resolves to a `VkontakteUserEntity`
+     * object or `null` based on the provided screenName.
+     * @param {string} nickname - The `screenName` parameter is a string that represents the screenName of a user.
+     * @returns a Promise that resolves to either a VkontakteUserEntity object or null.
+     */
+    findOneByScreenName(screenName: string): Promise<VkontakteUserEntity | null> {
+        return this.em.findOneBy(VkontakteUserEntity, { screenName });
     }
 }

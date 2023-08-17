@@ -55,6 +55,7 @@ export class VkontakteService {
         'bdate',
         'sex',
         'nickname',
+        'screen_name',
     ]): Promise<VkontakteUserDto[]> {
         const { response } = await this.vkontakteClient.sendRequest<{ response: VkontakteUserDto[] }>(
             'users.get',
@@ -85,7 +86,8 @@ export class VkontakteService {
         'bdate',
         'sex',
         'nickname',
-    ]): Promise<VkontakteUserDto> {
+        'screen_name',
+    ]): Promise<VkontakteUserDto | undefined> {
         const users = await this.getUsers([userId], fields);
 
         return users.pop();

@@ -17,6 +17,7 @@ export class VkontakteGetUsersDto {
             'bdate',
             'sex',
             'nickname',
+            'screen_name',
         ],
     })
     fields: string[];
