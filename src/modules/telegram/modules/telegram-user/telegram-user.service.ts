@@ -48,4 +48,19 @@ export class TelegramUserService {
     findOneById(id: TelegramUserID): Promise<TelegramUserEntity | null> {
         return this.em.findOneBy(TelegramUserEntity, { id });
     }
+
+    /**
+     * The function `findTrackedUsers` returns a Telegram user entity with its related tracked
+     * Vkontakte users.
+     * @param {number} userIDInTelegram - The parameter `userIDInTelegram` is a number that represents
+     * the user ID in the Telegram messaging platform.
+     * @returns a Promise that resolves to a TelegramUserEntity object.
+     */
+    findTrackedUsers(userIDInTelegram: number): Promise<TelegramUserEntity> {
+        return this.em.findOne(TelegramUserEntity, {
+            where: { userIDInTelegram }, relations: {
+                trackedVkontakteUsers: true,
+            },
+        });
+    }
 }

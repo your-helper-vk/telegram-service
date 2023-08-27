@@ -19,7 +19,11 @@ export class VkontakteFriendService {
      * @returns a Promise that resolves to a VkontakteFriendEntity object.
      */
     addFriend(vkontakteUserID: VkontakteUserID, vkontakteFriendUserID: VkontakteUserID): Promise<VkontakteFriendEntity> {
-        const newLink = this.em.create(VkontakteFriendEntity, { vkontakteUserID, vkontakteFriendUserID });
+        const newLink = this.em.create(VkontakteFriendEntity, {
+            vkontakteUserID,
+            vkontakteFriendUserID,
+        });
+
         return this.em.save(VkontakteFriendEntity, newLink);
     }
 
@@ -40,5 +44,15 @@ export class VkontakteFriendService {
         }
 
         return this.em.remove(VkontakteFriendEntity, link);
+    }
+
+    /**
+     * The function "findFriend" takes in two Vkontakte user IDs and returns a promise that resolves to VkontakteFriendEntity or null.
+     * @param {VkontakteUserID} vkontakteUserID - The Vkontakte user ID of the user for whom we want to find a friend.
+     * @param {VkontakteUserID} vkontakteFriendUserID - The parameter "vkontakteFriendUserID" is the ID of the friend on Vkontakte.
+     * @returns a Promise that resolves to either a VkontakteFriendEntity object or null.
+     */
+    findFriend(vkontakteUserID: VkontakteUserID, vkontakteFriendUserID: VkontakteUserID): Promise<VkontakteFriendEntity | null> {
+        return this.em.findOneBy(VkontakteFriendEntity, { vkontakteUserID, vkontakteFriendUserID });
     }
 }

@@ -13,7 +13,7 @@ export class TelegramUserEntity extends ApplicationEntity<TelegramUserID> {
     @JoinTable({
         name: 'telegram_tracked_vk_users',
         joinColumn: { name: 'telegram_user_id', referencedColumnName: 'id' },
-        inverseJoinColumn: { name: 'telegram_user_id', referencedColumnName: 'id' },
+        inverseJoinColumn: { name: 'vkontakte_user_id', referencedColumnName: 'id' },
     })
     trackedVkontakteUsers: VkontakteUserEntity[];
 }

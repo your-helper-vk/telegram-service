@@ -22,13 +22,13 @@ export class TelegramChatService {
         const oldChat = await this.em.findOneBy(TelegramChatEntity, { chatIdInTelegram: dto.chatIDInTelegram });
 
         if (oldChat) {
-            throw new BadRequestException('Chat already exists');
+            throw new BadRequestException('Телеграм чат уже сохранён');
         }
 
         const user = await this.telegramUserService.findOneById(dto.telegramUserID);
 
         if (!user) {
-            throw new BadRequestException('User not found');
+            throw new BadRequestException('Телеграм пользователь не найден');
         }
 
         const newChat = this.em.create(TelegramChatEntity, {

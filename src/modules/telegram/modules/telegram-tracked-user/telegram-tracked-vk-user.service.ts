@@ -21,7 +21,13 @@ export class TelegramTrackedVkUserService {
      * identifier of a user on the Vkontakte social media platform.
      * @returns the saved instance of the TelegramTrackedVkUserEntity.
      */
-    addUserToTracking(telegramUserID: TelegramUserID, vkontakteUserID: VkontakteUserID): Promise<TelegramTrackedVkUserEntity> {
+    async addUserToTracking(telegramUserID: TelegramUserID, vkontakteUserID: VkontakteUserID): Promise<TelegramTrackedVkUserEntity> {
+        const oldLink = await this.em.findOneBy(TelegramTrackedVkUserEntity, { telegramUserID, vkontakteUserID });
+
+        if (oldLink) {
+            throw new BadRequestException('Пользователь уже добавлен к отслеживанию');
+        }
+
         const newLink = this.em.create(TelegramTrackedVkUserEntity, { telegramUserID, vkontakteUserID });
         return this.em.save(TelegramTrackedVkUserEntity, newLink);
     }
@@ -40,7 +46,7 @@ export class TelegramTrackedVkUserService {
         const link = await this.em.findOneBy(TelegramTrackedVkUserEntity, { telegramUserID, vkontakteUserID });
 
         if (!link) {
-            throw new BadRequestException('Relation not found for tracking user');
+            throw new BadRequestException('Пользователь не был добавлен к отслеживанию');
         }
 
         return this.em.remove(TelegramTrackedVkUserEntity, link);
