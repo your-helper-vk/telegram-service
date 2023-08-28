@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { VkontakteUserDto } from '@vkontakte/dto/vkontakte-user.dto';
+import { VkontakteHelper } from '@vkontakte/helper/vkontakte.helper';
 import { EntityManager } from 'typeorm';
 
 import { VkontakteFriendService } from '../vkontakte-friend/vkontakte-friend.service';
@@ -26,7 +27,7 @@ export class VkontakteUserService {
         const oldVkUser = await this.findOneByUserIDInVkontakte(dto.userIDInVkontakte);
 
         if (oldVkUser) {
-            throw new BadRequestException('Vkontakte user already exists');
+            throw new BadRequestException(`Пользователь ВК уже сохранён ${dto.userIDInVkontakte}`);
         }
 
         const newVkUser = this.em.create(VkontakteUserEntity, { ...dto });
@@ -35,51 +36,65 @@ export class VkontakteUserService {
     }
 
     /**
-     * The `saveFriends` function saves a list of friends for a given user in the VKontakte social
-     * network, by checking if each friend is already saved in the database and adding them if
-     * necessary.
-     * @param {string} screenName - The screen name of the VKontakte user for whom the friends are
-     * being saved.
-     * @param {VkontakteUserDto[]} friends - An array of objects representing friends of a user on
+     * This function saves a user's friends in a VKontakte social media platform by adding new friends
+     * and removing deleted friends.
+     * @param {number} userIDInVkontakte - The userIDInVkontakte parameter is the ID of the user in the
+     * Vkontakte social network. It is a number that uniquely identifies the user in Vkontakte.
+     * @param {VkontakteUserDto[]} friends - An array of objects representing the friends of a user in
      * Vkontakte. Each object in the array should have the following properties:
      */
-    async saveFriends(screenName: string, friends: VkontakteUserDto[]): Promise<void> {
-        const user = await this.findOneByScreenName(screenName);
+    async saveFriends(userIDInVkontakte: number, friends: VkontakteUserDto[]): Promise<void> {
+        const user = await this.findOneByUserIDInVkontakte(userIDInVkontakte);
 
         if (!user) {
-            throw new NotFoundException(`Пользователь VK с ${screenName} не найден`);
+            throw new NotFoundException(`Пользователь VK с id ${userIDInVkontakte} не найден`);
         }
 
-        // Проходим для каждого друга
-        for (const friend of friends) {
-            const friendUser = await this.findOneByUserIDInVkontakte(friend.id);
-            const { id, ...friendWithoutId } = friend;
+        // VkontakteUserID Старых друзей
+        const oldFriendsIDs = await this.vkonkateFriendService.findFriendVkontakteUserIDs(user.id);
+        const newFriendsIDs = friends.map(friend => friend.id);
 
-            // Если пользователь не сохранён в нашей базе из ВК, то сохраняем в нашей базе
-            if (!friendUser) {
+        // Список новых/старых/удаленных друзей
+        const smashedFriendsIDs = VkontakteHelper.smashFriendsByUserIdsInVkontakte(oldFriendsIDs, newFriendsIDs);
+
+        // Сначала добавляем новых друзей
+        for (const newFriendID of smashedFriendsIDs.newFriends) {
+            const { id, ...friendWithoutId } = friends.find(item => item.id === newFriendID);
+
+            // Ищем пользователя в нашей базе, если он уже создан, то просто добавляем его в друзья
+            const newFriendVkDatabase = await this.findOneByUserIDInVkontakte(id);
+
+            if (!newFriendVkDatabase) {
+                // Создаем друга в нашей базе ВК
                 const newUserId = VkontakteUserID.new();
                 await this.create({
                     id: newUserId,
                     userIDInVkontakte: id,
                     ...friendWithoutId,
                 });
-
                 // Добавляем в список друзей
                 await this.vkonkateFriendService.addFriend(
                     user.id,
                     newUserId,
                 );
             } else {
-                // Ищем пользователя в списке друзей, если его нет, то добавляем
-                const oldFriend = await this.vkonkateFriendService.findFriend(
+                // Просто добавляем в список друзей
+                await this.vkonkateFriendService.addFriend(
                     user.id,
-                    friendUser.id,
+                    newFriendVkDatabase.id,
                 );
-
-                if (!oldFriend) {
-                    await this.vkonkateFriendService.addFriend(user.id, friendUser.id);
-                }
             }
+        }
+
+        // Удаляем друзей из списка
+        for (const deletedFriendID of smashedFriendsIDs.deletedFriends) {
+            const deletedUser = await this.findOneByUserIDInVkontakte(deletedFriendID);
+
+            if (!deletedUser) {
+                throw new BadRequestException(`Не пользователь для удаления, id: ${deletedFriendID}`);
+            }
+
+            await this.vkonkateFriendService.removeFriend(user.id, deletedUser.id);
         }
     }
 

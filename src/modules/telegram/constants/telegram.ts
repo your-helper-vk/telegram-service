@@ -29,6 +29,7 @@ export const TelegramReplyMarkup = {
     reply_markup: {
         keyboard: [
             [
+                { text: 'Список отслеживаемых пользователей' },
                 { text: 'Добавить пользователя к отслеживанию' },
                 { text: 'Удалить пользователя из отслеживания' },
             ],

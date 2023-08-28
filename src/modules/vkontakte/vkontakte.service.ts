@@ -25,7 +25,10 @@ export class VkontakteService {
      * https://dev.vk.com/method/friends.get#%D0%9F%D0%B0%D1%80%D0%B0%D0%BC%D0%B5%D1%82%D1%80%D1%8B
      * @returns Список пользователей ВК
      */
-    async getFriends(userID: number, fields: string[]): Promise<VkontakteFriendsGetResponseDto> {
+    async getFriends(userID: number, fields: string[] = [
+        'sex',
+        'screen_name',
+    ]): Promise<VkontakteFriendsGetResponseDto> {
         const { response } = await this.vkontakteClient.sendRequest<{ response: VkontakteFriendsGetResponseDto }>(
             'friends.get',
             HttpMethod.GET,

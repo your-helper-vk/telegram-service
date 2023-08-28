@@ -25,7 +25,7 @@ export class TelegramTrackedVkUserService {
         const oldLink = await this.em.findOneBy(TelegramTrackedVkUserEntity, { telegramUserID, vkontakteUserID });
 
         if (oldLink) {
-            throw new BadRequestException('Пользователь уже добавлен к отслеживанию');
+            throw new BadRequestException('Пользователь уже добавлен к отслеживанию ❌');
         }
 
         const newLink = this.em.create(TelegramTrackedVkUserEntity, { telegramUserID, vkontakteUserID });

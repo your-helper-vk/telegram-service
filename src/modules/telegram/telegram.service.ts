@@ -5,7 +5,7 @@ import { VkontakteUserService } from '@vkontakte/modules/vkontakte-user/vkontakt
 import { VkontakteService } from '@vkontakte/vkontakte.service';
 import { BotCommand, Message } from 'node-telegram-bot-api';
 
-import { TelegramMessage } from './constants/telegram';
+import { TelegramMessage, TelegramReplyMarkup } from './constants/telegram';
 import { TelegramTextHelper } from './helper/telegram-text.helper';
 import { TelegramChatID } from './modules/telegram-chat/domain/telegram-chat.domain';
 import { CreateTelegramChatDto } from './modules/telegram-chat/dto/create-telegram-chat.dto';
@@ -42,25 +42,35 @@ export class TelegramService {
             const message = messageInfo.text;
             const chatIDInTelegram = messageInfo.chat.id;
             const userIDInTelegram = messageInfo.from.id;
+            try {
 
-            let resultMessage = TelegramMessage.UNDEFINED_COMMAND;
-            switch (message) {
-                case '/start':
-                    resultMessage = await this.startCommand(userIDInTelegram, chatIDInTelegram);
-                    break;
-                case '/tracked':
-                    resultMessage = await this.trackedCommand(userIDInTelegram);
-                    break;
-                default:
-                    if (message.includes('/add')) {
-                        const screenName = message.split(' ').pop();
 
-                        resultMessage = await this.addUserToTrackingCommand(chatIDInTelegram, userIDInTelegram, screenName);
-                    }
-                    break;
+                let resultMessage = TelegramMessage.UNDEFINED_COMMAND;
+                switch (message) {
+                    case '/start':
+                        resultMessage = await this.startCommand(userIDInTelegram, chatIDInTelegram);
+                        break;
+                    case '/tracked':
+                        resultMessage = await this.trackedCommand(userIDInTelegram);
+                        break;
+                    case 'Список отслеживаемых пользователей':
+                        resultMessage = await this.trackedCommand(userIDInTelegram);
+                        break;
+                    default:
+                        if (message.includes('/add')) {
+                            const screenName = message.split(' ').pop();
+
+                            resultMessage = await this.addUserToTrackingCommand(chatIDInTelegram, userIDInTelegram, screenName);
+                        }
+                        break;
+                }
+
+                await this.sendMessage(chatIDInTelegram, resultMessage);
+            } catch (err) {
+                this.logger.error(err);
+
+                throw err;
             }
-
-            await this.sendMessage(chatIDInTelegram, resultMessage);
         });
     }
 
@@ -125,11 +135,19 @@ export class TelegramService {
                     sex: user.sex,
                 });
 
+                const { items } = await this.vkontakteService.getFriends(user.id);
+
+                await this.vkontakteUserService.saveFriends(user.id, items);
+
                 await this.telegramTrackedVkUserService.addUserToTracking(telegramUser.id, vkontakteUserID);
 
                 return TelegramMessage.USER_SUCCESSFULLY_ADDED;
             } else {
                 await this.telegramTrackedVkUserService.addUserToTracking(telegramUser.id, vkontakteUser.id);
+
+                const { items } = await this.vkontakteService.getFriends(vkontakteUser.userIDInVkontakte);
+
+                await this.vkontakteUserService.saveFriends(vkontakteUser.userIDInVkontakte, items);
 
                 return TelegramMessage.USER_SUCCESSFULLY_ADDED;
             }
@@ -167,7 +185,11 @@ export class TelegramService {
     }
 
     sendMessage(chatID: number, message: string): Promise<Message> {
-        // eslint-disable-next-line camelcase
-        return telegramBot.sendMessage(chatID, message, { parse_mode: 'MarkdownV2' });
+        return telegramBot.sendMessage(chatID, message, {
+            // eslint-disable-next-line camelcase
+            parse_mode: 'MarkdownV2',
+            // eslint-disable-next-line camelcase
+            reply_markup: TelegramReplyMarkup.reply_markup,
+        });
     }
 }

@@ -55,4 +55,34 @@ export class VkontakteFriendService {
     findFriend(vkontakteUserID: VkontakteUserID, vkontakteFriendUserID: VkontakteUserID): Promise<VkontakteFriendEntity | null> {
         return this.em.findOneBy(VkontakteFriendEntity, { vkontakteUserID, vkontakteFriendUserID });
     }
+
+    /**
+     * The function "findFriends" takes a Vkontakte user ID as input and returns a promise that resolves
+     * to an array of Vkontakte friend entities.
+     * @param {VkontakteUserID} vkontakteUserID - The `vkontakteUserID` parameter is the ID of a user on
+     * the Vkontakte social media platform.
+     * @returns a Promise that resolves to an array of VkontakteFriendEntity objects.
+     */
+    findFriends(vkontakteUserID: VkontakteUserID): Promise<VkontakteFriendEntity[]> {
+        return this.em.findBy(VkontakteFriendEntity, { vkontakteUserID });
+    }
+
+    /**
+     * The function "findFriendVkontakteUserIDs" takes a Vkontakte user ID as input and returns an
+     * array of user IDs for the user's friends.
+     * @param {VkontakteUserID} vkontakteUserID - The `vkontakteUserID` parameter is the ID of a user
+     * in the Vkontakte social media platform.
+     * @returns an array of numbers, which are the user IDs of the friends of the specified Vkontakte
+     * user.
+     */
+    async findFriendVkontakteUserIDs(vkontakteUserID: VkontakteUserID): Promise<number[]> {
+        const user = await this.em.findOne(VkontakteFriendEntity, {
+            where: { vkontakteUserID },
+            relations: { vkontakteFriends: true },
+        });
+
+        return user
+            ? user.vkontakteFriends.map(friendEntity => friendEntity.userIDInVkontakte)
+            : [];
+    }
 }
