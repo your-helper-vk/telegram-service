@@ -1,6 +1,6 @@
 import { ApplicationEntity } from '@common/entity/application.entity';
 import { TelegramUserEntity } from 'src/modules/telegram/modules/telegram-user/domain/telegram-user.entity';
-import { Column, Entity, JoinTable, ManyToMany } from 'typeorm';
+import { Column, Entity, ManyToMany } from 'typeorm';
 
 import { VkontakteUserID } from './vkontakte-user.domain';
 
@@ -34,11 +34,11 @@ export class VkontakteUserEntity extends ApplicationEntity<VkontakteUserID> {
     canAccessClosed?: boolean;
 
     @ManyToMany(() => VkontakteUserEntity, vkontakteUser => vkontakteUser.following)
-    @JoinTable({
-        name: 'vkontakte_friends',
-        joinColumn: { name: 'vkontakte_user_id', referencedColumnName: 'id' },
-        inverseJoinColumn: { name: 'vkontakte_friend_user_id', referencedColumnName: 'id' },
-    })
+    // @JoinTable({
+    //     name: 'vkontakte_friends',
+    //     joinColumn: { name: 'vkontakte_user_id', referencedColumnName: 'id' },
+    //     inverseJoinColumn: { name: 'vkontakte_friend_user_id', referencedColumnName: 'id' },
+    // })
     followers: VkontakteUserEntity[];
 
     @ManyToMany(() => VkontakteUserEntity, vkontakteUser => vkontakteUser.followers)

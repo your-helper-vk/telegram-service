@@ -129,4 +129,31 @@ export class VkontakteUserService {
     findOneByScreenName(screenName: string): Promise<VkontakteUserEntity | null> {
         return this.em.findOneBy(VkontakteUserEntity, { screenName });
     }
+
+    /**
+     * The function "findUsers" returns a promise that resolves to an array of VkontakteUserEntity
+     * objects.
+     * @returns The function `findUsers()` returns a Promise that resolves to an array of
+     * `VkontakteUserEntity` objects.
+     */
+    findUsers(): Promise<VkontakteUserEntity[]> {
+        return this.em.find(VkontakteUserEntity);
+    }
+
+    /**
+     * The function "findFriends" retrieves a Vkontakte user entity along with their following
+     * relations based on the provided Vkontakte user ID.
+     * @param {VkontakteUserID} vkontakteUserID - The `vkontakteUserID` parameter is the ID of a user
+     * on the Vkontakte social media platform.
+     * @returns The function `findFriends` returns a Promise that resolves to either a
+     * `VkontakteUserEntity` object or `null`.
+     */
+    findFriends(vkontakteUserID: VkontakteUserID): Promise<VkontakteUserEntity | null> {
+        return this.em.findOne(VkontakteUserEntity, {
+            where: { id: vkontakteUserID },
+            relations: {
+                following: true,
+            },
+        });
+    }
 }

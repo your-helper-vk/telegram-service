@@ -99,7 +99,7 @@ export class TelegramService {
 
     async addUserToTrackingCommand(chatIDInTelegram: number, userIDInTelegram: number, screenName: string): Promise<string> {
         try {
-            const chat = await this.telegramChatService.findOneByChatIdInTelegram(chatIDInTelegram);
+            const chat = await this.telegramChatService.findOneByChatIDInTelegram(chatIDInTelegram);
 
             if (!chat) {
                 return TelegramMessage.CHAT_NOT_FOUND;

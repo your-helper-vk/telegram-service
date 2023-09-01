@@ -20,6 +20,7 @@ import { VkontakteService } from './vkontakte.service';
     exports: [
         VkontakteService,
         VkontakteUserService,
+        VkontakteFriendService,
     ],
 })
 export class VkontakteModule { }

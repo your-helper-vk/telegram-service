@@ -45,6 +45,16 @@ export class VkontakteHelper {
         };
     }
 
+    /**
+     * The function takes two arrays of VKontakte friend IDs and returns an object containing the IDs
+     * of old friends, new friends, and deleted friends.
+     * @param {number[]} oldArrayVkFriendIDs - An array of numbers representing the IDs of friends in
+     * the old list.
+     * @param {number[]} newArrayVkFriendIDs - An array of numbers representing the user IDs of friends
+     * in Vkontakte that are in the new list of friends.
+     * @returns an object of type `Vkontakte.FriendsActualInfoID` with three properties: `oldFriends`,
+     * `newFriends`, and `deletedFriends`.
+     */
     public static smashFriendsByUserIdsInVkontakte(oldArrayVkFriendIDs: number[], newArrayVkFriendIDs: number[]): Vkontakte.FriendsActualInfoID {
         const oldFriends: number[] = [];
         const deletedFriends: number[] = [];

@@ -76,13 +76,15 @@ export class VkontakteFriendService {
      * user.
      */
     async findFriendVkontakteUserIDs(vkontakteUserID: VkontakteUserID): Promise<number[]> {
-        const user = await this.em.findOne(VkontakteFriendEntity, {
+        const user = await this.em.find(VkontakteFriendEntity, {
             where: { vkontakteUserID },
-            relations: { vkontakteFriends: true },
+            relations: {
+                vkontakteFriend: true,
+            },
         });
 
         return user
-            ? user.vkontakteFriends.map(friendEntity => friendEntity.userIDInVkontakte)
+            ? user.map(friendEntity => friendEntity.vkontakteFriend.userIDInVkontakte)
             : [];
     }
 }

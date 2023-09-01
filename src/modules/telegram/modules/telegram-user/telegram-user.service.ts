@@ -63,4 +63,18 @@ export class TelegramUserService {
             },
         });
     }
+
+    /**
+     * The function `findUsers` returns a promise that resolves to an array of `TelegramUserEntity`
+     * objects, with their related `trackedVkontakteUsers` included.
+     * @returns The function `findUsers()` returns a Promise that resolves to an array of
+     * `TelegramUserEntity` objects.
+     */
+    findUsers(): Promise<TelegramUserEntity[]> {
+        return this.em.find(TelegramUserEntity, {
+            relations: {
+                trackedVkontakteUsers: true,
+            },
+        });
+    }
 }

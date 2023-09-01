@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
 
+import { TelegramUserID } from '../telegram-user/domain/telegram-user.domain';
 import { TelegramUserService } from '../telegram-user/telegram-user.service';
 import { TelegramChatEntity } from './domain/telegram-chat.entity';
 import { CreateTelegramChatDto } from './dto/create-telegram-chat.dto';
@@ -46,7 +47,19 @@ export class TelegramChatService {
      * TelegramChatEntity object in the database that matches the specified chatIdInTelegram.
      * @returns A Promise that resolves to either a TelegramChatEntity object or null.
      */
-    findOneByChatIdInTelegram(chatIdInTelegram: number): Promise<TelegramChatEntity | null> {
+    findOneByChatIDInTelegram(chatIdInTelegram: number): Promise<TelegramChatEntity | null> {
         return this.em.findOneBy(TelegramChatEntity, { chatIdInTelegram });
+    }
+
+    /**
+     * The function "findChatByUserTelegramId" returns a Promise that resolves to a TelegramChatEntity
+     * or null, based on the provided TelegramUserID.
+     * @param {TelegramUserID} telegramUserID - The `telegramUserID` parameter is the unique identifier
+     * for a user in the Telegram messaging platform. It is used to identify a specific user in order
+     * to retrieve their associated chat entity.
+     * @returns a Promise that resolves to either a TelegramChatEntity object or null.
+     */
+    findChatByUserTelegramId(telegramUserID: TelegramUserID): Promise<TelegramChatEntity | null> {
+        return this.em.findOneBy(TelegramChatEntity, { telegramUserID });
     }
 }
