@@ -24,15 +24,21 @@ export class TelegramTaskService {
         private readonly telegramChatService: TelegramChatService,
     ) { }
 
-    @Cron(CronExpression.EVERY_30_SECONDS)
-    async handleCron() {
+    /**
+     * Проходит по всем отслеживаемым пользователям и проверяет друзей
+     * Смотрит новых/удаленных друзей и отсылает сообщение в телеграмм
+     */
+    @Cron(CronExpression.EVERY_MINUTE)
+    async checkTrackedFriends(): Promise<void> {
+        this.logger.log('Старт проверки отслеживаемых пользователей');
+
         const telegramTrackedUsers = await this.telegramUserService.findUsers();
-        this.logger.log('Start cron for check users');
         for (const telegramTrackedUser of telegramTrackedUsers) {
             const telegramChat = await this.telegramChatService.findChatByUserTelegramId(telegramTrackedUser.id);
 
-            this.logger.log('Start check for user id ' + telegramTrackedUser.userIDInTelegram);
+            this.logger.log('Проверка отслеживаемых пользователей для ' + telegramTrackedUser.userIDInTelegram);
             for (const trackedVkontakteUser of telegramTrackedUser.trackedVkontakteUsers) {
+                this.logger.log('Пользователь ' + trackedVkontakteUser.firstName + ' ' + trackedVkontakteUser.lastName);
                 const oldFriendsIDsInDatabase = await this.vkontakteFriendService.findFriendVkontakteUserIDs(trackedVkontakteUser.id);
 
                 const actualFriends = await this.vkontakteService.getFriends(trackedVkontakteUser.userIDInVkontakte);
@@ -46,10 +52,13 @@ export class TelegramTaskService {
                     await Promise.all(smashFriendInfo.deletedFriends.map(async (newFriendID) => await this.vkontakteUserService.findOneByUserIDInVkontakte(newFriendID))),
                 ]);
 
-                const resultMessage = TelegramTextHelper.getChangeFriendsListText(newFriends, deletedFriends);
-
-                await this.telegramService.sendMessage(telegramChat.chatIdInTelegram, resultMessage);
+                if (newFriends.length > 0 || deletedFriends.length > 0) {
+                    const resultMessage = TelegramTextHelper.getChangeFriendsListText(newFriends, deletedFriends);
+                    await this.telegramService.sendMessage(telegramChat.chatIdInTelegram, resultMessage);
+                }
             }
+            this.logger.log('Проверка отслеживаемых пользователей окончена для ' + telegramTrackedUser.userIDInTelegram);
         }
+        this.logger.log('Проверка пользователей окончена');
     }
 }

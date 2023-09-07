@@ -120,6 +120,10 @@ export class TelegramService {
                     return TelegramMessage.USER_NOT_FOUND;
                 }
 
+                if (user.isClosed || user.canAccessClosed === false) {
+                    return TelegramMessage.USER_PROFILE_IS_CLOSED;
+                }
+
                 const vkontakteUserID = VkontakteUserID.new();
 
                 await this.vkontakteUserService.create({
@@ -143,12 +147,15 @@ export class TelegramService {
 
                 return TelegramMessage.USER_SUCCESSFULLY_ADDED;
             } else {
-                await this.telegramTrackedVkUserService.addUserToTracking(telegramUser.id, vkontakteUser.id);
+                if (vkontakteUser.isClosed || vkontakteUser.canAccessClosed === false) {
+                    return TelegramMessage.USER_PROFILE_IS_CLOSED;
+                }
 
                 const { items } = await this.vkontakteService.getFriends(vkontakteUser.userIDInVkontakte);
 
                 await this.vkontakteUserService.saveFriends(vkontakteUser.userIDInVkontakte, items);
 
+                await this.telegramTrackedVkUserService.addUserToTracking(telegramUser.id, vkontakteUser.id);
                 return TelegramMessage.USER_SUCCESSFULLY_ADDED;
             }
         } catch (error: unknown) {
