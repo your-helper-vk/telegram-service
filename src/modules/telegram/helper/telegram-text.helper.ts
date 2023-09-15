@@ -4,8 +4,8 @@ import { VkontakteUserEntity } from '@vkontakte/modules/vkontakte-user/domain/vk
 
 export class TelegramTextHelper {
     private static readonly CHANGE_NOT_FOUND = 'Изменений не найдено';
-    private static readonly LIST_OF_NEW_FRIENDS = 'Список новых пользователей:';
-    private static readonly LIST_OF_DELETED_FRIENDS = 'Изменений не найдено';
+    private static readonly LIST_OF_NEW_FRIENDS = 'Список новых друзей';
+    private static readonly LIST_OF_DELETED_FRIENDS = 'Список удаленных друзей';
 
     /**
      * The function `getTrackedList` takes an array of `VkontakteUserEntity` objects and returns a
@@ -15,7 +15,7 @@ export class TelegramTextHelper {
      * @returns a string that contains a list of tracked Vkontakte users.
      */
     public static getTrackedList(trackedVkontakteUsers: VkontakteUserEntity[]): string {
-        let text = 'Список отслеживаемых пользователей:\n';
+        let text = '';
 
         trackedVkontakteUsers.forEach((vkUser: VkontakteUserEntity, index: number) => {
             text += ++index + '\\)' + ' ' +
@@ -28,23 +28,42 @@ export class TelegramTextHelper {
         return text;
     }
 
-    public static getChangeFriendsListText(newFriends: VkontakteUserEntity[], deletedFriends: VkontakteUserEntity[]): string {
+    public static getChangeFriendsListText(
+        user: VkontakteUserEntity,
+        newFriends: VkontakteUserEntity[],
+        deletedFriends: VkontakteUserEntity[]
+    ): string {
         if (newFriends.length === 0 && deletedFriends.length === 0) {
             return this.CHANGE_NOT_FOUND;
         }
 
         if (newFriends.length === 0 && deletedFriends.length !== 0) {
 
-            return this.LIST_OF_DELETED_FRIENDS + ':\n' + this.getTrackedList(deletedFriends);
+            return this.LIST_OF_DELETED_FRIENDS +
+                MarkDownHelper.wrapTextWithUrl(
+                    user.firstName + ' ' + user.lastName, VK_URL + user.screenName
+                ) + ' :\n' +
+                this.getTrackedList(deletedFriends);
         }
 
         if (newFriends.length !== 0 && deletedFriends.length === 0) {
-
-            return this.LIST_OF_NEW_FRIENDS + ':\n' + this.getTrackedList(newFriends);
+            return this.LIST_OF_NEW_FRIENDS +
+                MarkDownHelper.wrapTextWithUrl(
+                    user.firstName + ' ' + user.lastName, VK_URL + user.screenName
+                ) + ' :\n' +
+                this.getTrackedList(newFriends);
         }
 
-        return this.LIST_OF_NEW_FRIENDS + ':\n' + this.getTrackedList(newFriends) +
-            '\n\n' + this.LIST_OF_DELETED_FRIENDS + ':\n' + this.getTrackedList(deletedFriends);
+        return this.LIST_OF_NEW_FRIENDS +
+            MarkDownHelper.wrapTextWithUrl(
+                user.firstName + ' ' + user.lastName, VK_URL + user.screenName
+            ) +
+            ' :\n' +
+            this.getTrackedList(newFriends) +
+            '\n\n' +
+            this.LIST_OF_DELETED_FRIENDS +
+            ':\n' +
+            this.getTrackedList(deletedFriends);
     }
 
     /**

@@ -53,7 +53,11 @@ export class TelegramTaskService {
                 ]);
 
                 if (newFriends.length > 0 || deletedFriends.length > 0) {
-                    const resultMessage = TelegramTextHelper.getChangeFriendsListText(newFriends, deletedFriends);
+                    const resultMessage = TelegramTextHelper.getChangeFriendsListText(
+                        trackedVkontakteUser,
+                        newFriends,
+                        deletedFriends
+                    );
                     await this.telegramService.sendMessage(telegramChat.chatIdInTelegram, resultMessage);
                 }
             }
