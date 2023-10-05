@@ -40,6 +40,7 @@ export class TelegramTextHelper {
         if (newFriends.length === 0 && deletedFriends.length !== 0) {
 
             return this.LIST_OF_DELETED_FRIENDS +
+                ' ' +
                 MarkDownHelper.wrapTextWithUrl(
                     user.firstName + ' ' + user.lastName, VK_URL + user.screenName
                 ) + ' :\n' +
@@ -48,6 +49,7 @@ export class TelegramTextHelper {
 
         if (newFriends.length !== 0 && deletedFriends.length === 0) {
             return this.LIST_OF_NEW_FRIENDS +
+                ' ' +
                 MarkDownHelper.wrapTextWithUrl(
                     user.firstName + ' ' + user.lastName, VK_URL + user.screenName
                 ) + ' :\n' +
@@ -55,6 +57,7 @@ export class TelegramTextHelper {
         }
 
         return this.LIST_OF_NEW_FRIENDS +
+            ' ' +
             MarkDownHelper.wrapTextWithUrl(
                 user.firstName + ' ' + user.lastName, VK_URL + user.screenName
             ) +
