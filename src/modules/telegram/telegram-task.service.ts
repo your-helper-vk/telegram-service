@@ -8,7 +8,6 @@ import { VkontakteUserService } from '@vkontakte/modules/vkontakte-user/vkontakt
 import { VkontakteService } from '@vkontakte/vkontakte.service';
 
 import { TelegramTextHelper } from './helper/telegram-text.helper';
-import { TelegramChatService } from './modules/telegram-chat/telegram-chat.service';
 import { TelegramUserID } from './modules/telegram-user/domain/telegram-user.domain';
 import { TelegramUserService } from './modules/telegram-user/telegram-user.service';
 import { TelegramService } from './telegram.service';
@@ -23,14 +22,13 @@ export class TelegramTaskService {
         private readonly vkontakteFriendService: VkontakteFriendService,
         private readonly telegramUserService: TelegramUserService,
         private readonly telegramService: TelegramService,
-        private readonly telegramChatService: TelegramChatService,
     ) { }
 
     /**
      * Проходит по всем отслеживаемым пользователям и проверяет друзей
      * Смотрит новых/удаленных друзей и отсылает сообщение в телеграмм
      */
-    @Cron(CronExpression.EVERY_MINUTE)
+    @Cron(CronExpression.EVERY_10_MINUTES)
     async checkTrackedFriends(): Promise<void> {
         this.logger.log('Старт проверки отслеживаемых пользователей');
 
