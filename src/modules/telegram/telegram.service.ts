@@ -56,6 +56,9 @@ export class TelegramService {
                     case 'Список отслеживаемых пользователей':
                         resultMessage = await this.trackedCommand(userIDInTelegram);
                         break;
+                    case 'Удалить всех пользователей из отслеживания':
+                        resultMessage = await this.deleteAllTrackedUser(userIDInTelegram);
+                        break;
                     default:
                         if (message.includes('/add')) {
                             const screenName = message.split(' ').pop();
@@ -158,6 +161,24 @@ export class TelegramService {
                 await this.telegramTrackedVkUserService.addUserToTracking(telegramUser.id, vkontakteUser.id);
                 return TelegramMessage.USER_SUCCESSFULLY_ADDED;
             }
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                return error.message;
+            }
+        }
+    }
+
+    async deleteAllTrackedUser(userIDInTelegram: number): Promise<string> {
+        try {
+            const telegramUser = await this.telegramUserService.findOneByUserIDInTelegram(userIDInTelegram);
+
+            if (!telegramUser) {
+                throw new Error('Telegram user not found');
+            }
+
+            await this.telegramTrackedVkUserService.removeAllUsersFromTracking(telegramUser.id);
+
+            return TelegramMessage.DELETE_TRACKED_VK_USERS_SUCCESSFULLY;
         } catch (error: unknown) {
             if (error instanceof Error) {
                 return error.message;

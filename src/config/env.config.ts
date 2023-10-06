@@ -16,7 +16,7 @@ export const envConfig = cleanEnv(process.env, {
     POSTGRES_MIGRATIONS_RUN: bool({ default: false }),
 
     /* Telegram bot env */
-    TG_BOT_TOKEN: str({ default: '6212572553:AAGFutPYCAg0G0WTQXJ-JrTa3QP6IUG7-B0' }),
+    TG_BOT_TOKEN: str({ default: '6346068510:AAGHlzNy8ynMBOAJFh8P96kdfW6fcGMMADg' }),
     TG_BOT_API: str({ default: 'https://api.telegram.org/' }),
 
     /* Vkontakte env */

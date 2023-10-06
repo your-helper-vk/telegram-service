@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectEntityManager } from '@nestjs/typeorm';
+import { TelegramMessage } from '@telegram/constants/telegram';
 import { VkontakteUserID } from '@vkontakte/modules/vkontakte-user/domain/vkontakte-user.domain';
 import { EntityManager } from 'typeorm';
 
@@ -50,5 +51,17 @@ export class TelegramTrackedVkUserService {
         }
 
         return this.em.remove(TelegramTrackedVkUserEntity, link);
+    }
+
+    async removeAllUsersFromTracking(telegramUserID: TelegramUserID): Promise<void> {
+        const links = await this.em.findBy(TelegramTrackedVkUserEntity, { telegramUserID });
+
+        if (links.length === 0) {
+            throw new Error(TelegramMessage.TRACKED_VK_LIST_IS_EMPTY);
+        }
+
+        for (const link of links) {
+            await this.em.remove(TelegramTrackedVkUserEntity, link);
+        }
     }
 }

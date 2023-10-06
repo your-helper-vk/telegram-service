@@ -1,14 +1,13 @@
+import { getValueByKeyObjectFromMap, hasObjectInMap, UsersMapKeyType, UsersMapValueType } from '@common/helper/map.helper';
 import { Injectable } from '@nestjs/common/decorators';
 import { Logger } from '@nestjs/common/services';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { VkontakteHelper } from '@vkontakte/helper/vkontakte.helper';
 import { VkontakteFriendService } from '@vkontakte/modules/vkontakte-friend/vkontakte-friend.service';
-import { VkontakteUserID } from '@vkontakte/modules/vkontakte-user/domain/vkontakte-user.domain';
 import { VkontakteUserService } from '@vkontakte/modules/vkontakte-user/vkontakte-user.service';
 import { VkontakteService } from '@vkontakte/vkontakte.service';
 
 import { TelegramTextHelper } from './helper/telegram-text.helper';
-import { TelegramUserID } from './modules/telegram-user/domain/telegram-user.domain';
 import { TelegramUserService } from './modules/telegram-user/telegram-user.service';
 import { TelegramService } from './telegram.service';
 
@@ -28,26 +27,26 @@ export class TelegramTaskService {
      * Проходит по всем отслеживаемым пользователям и проверяет друзей
      * Смотрит новых/удаленных друзей и отсылает сообщение в телеграмм
      */
-    @Cron(CronExpression.EVERY_10_MINUTES)
+    @Cron(CronExpression.EVERY_MINUTE)
     async checkTrackedFriends(): Promise<void> {
         this.logger.log('Старт проверки отслеживаемых пользователей');
 
         const telegramTrackedUsers = await this.telegramUserService.findUsers();
 
-        const usersMap = new Map<
-            { id: VkontakteUserID; userIDInVkontakte: number },
-            { id: TelegramUserID; userIDInTelegram: number }[]>();
+        const usersMap = new Map<UsersMapKeyType, UsersMapValueType[]>();
 
+        // Для каждого пользователя бота в телеграмме
         for (const telegramTrackedUser of telegramTrackedUsers) {
 
+            // Для каждого отслеживаемого пользователя для определенного пользователя бота в телеграмме
             for (const trackedVkontakteUser of telegramTrackedUser.trackedVkontakteUsers) {
 
                 const key = { id: trackedVkontakteUser.id, userIDInVkontakte: trackedVkontakteUser.userIDInVkontakte };
 
                 const value = { id: telegramTrackedUser.id, userIDInTelegram: telegramTrackedUser.userIDInTelegram };
 
-                if (usersMap.has(key)) {
-                    const usersInMap = usersMap.get({ id: trackedVkontakteUser.id, userIDInVkontakte: trackedVkontakteUser.userIDInVkontakte });
+                if (hasObjectInMap(usersMap, key)) {
+                    const usersInMap = getValueByKeyObjectFromMap(usersMap, key);
 
                     usersInMap.push({ id: telegramTrackedUser.id, userIDInTelegram: telegramTrackedUser.userIDInTelegram });
                 } else {
