@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 
 import { VkontakteFriendService } from './modules/vkontakte-friend/vkontakte-friend.service';
 import { VkontakteUserService } from './modules/vkontakte-user/vkontakte-user.service';
-import { VkontakteClient } from './vkontakte.client';
+import { VkontakteClient } from './services/vkontakte.client';
+import { VkontakteService } from './services/vkontakte.service';
 import { VkontakteController } from './vkontakte.controller';
-import { VkontakteService } from './vkontakte.service';
 
 @Module({
     imports: [],

@@ -12,4 +12,9 @@ namespace Vkontakte {
         deletedFriends: number[];
         newFriends: number[];
     }
+
+    export type ConfigType = {
+        VK_ACCESS_TOKEN: string;
+        VK_VERSION: string;
+    }
 }

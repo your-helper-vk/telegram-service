@@ -1,9 +1,11 @@
-import { envConfig } from '@config/env.config';
+import { createVkontakteConfig } from '@config/vkontakte.config';
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { plainToInstance } from 'class-transformer';
+import { Vkontakte } from 'types';
 
-import { VkontakteFriendsGetResponseDto } from './dto/vkontakte-friends-get-response.dto';
-import { VkontakteUserDto } from './dto/vkontakte-user.dto';
+import { VkontakteFriendsGetResponseDto } from '../dto/vkontakte-friends-get-response.dto';
+import { VkontakteUserDto } from '../dto/vkontakte-user.dto';
 import { VkontakteClient } from './vkontakte.client';
 
 export enum HttpMethod {
@@ -13,9 +15,14 @@ export enum HttpMethod {
 
 @Injectable()
 export class VkontakteService {
+    private vkontakteConfig: Vkontakte.ConfigType;
+
     constructor(
+        private readonly configService: ConfigService,
         private readonly vkontakteClient: VkontakteClient,
-    ) { }
+    ) {
+        this.vkontakteConfig = createVkontakteConfig(this.configService);
+    }
 
     // TODO: Доработать обработку ошибок из ВК, желательно в клиенте
     /**
@@ -38,8 +45,8 @@ export class VkontakteService {
                     user_id: userID,
                     fields: fields.join(','),
                     // eslint-disable-next-line camelcase
-                    access_token: envConfig.VK_ACCESS_TOKEN,
-                    v: envConfig.VK_VERSION,
+                    access_token: this.vkontakteConfig.VK_ACCESS_TOKEN,
+                    v: this.vkontakteConfig.VK_VERSION,
                 },
             }
         );
@@ -69,8 +76,8 @@ export class VkontakteService {
                     user_ids: userIDs.join(','),
                     fields: fields.join(','),
                     // eslint-disable-next-line camelcase
-                    access_token: envConfig.VK_ACCESS_TOKEN,
-                    v: envConfig.VK_VERSION,
+                    access_token: this.vkontakteConfig.VK_ACCESS_TOKEN,
+                    v: this.vkontakteConfig.VK_VERSION,
                 },
             }
         );
