@@ -1,11 +1,11 @@
-import { getValueByKeyObjectFromMap, hasObjectInMap, UsersMapKeyType, UsersMapValueType } from '@common/helper/map.helper';
+import { getValueByKeyObjectFromMap, hasObjectInMap, UsersMapKeyType, UsersMapValueType } from '@common/helpers/map.helper';
 import { Injectable } from '@nestjs/common/decorators';
 import { Logger } from '@nestjs/common/services';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { VkontakteHelper } from '@vkontakte/helper/vkontakte.helper';
 import { VkontakteFriendService } from '@vkontakte/modules/vkontakte-friend/vkontakte-friend.service';
 import { VkontakteUserService } from '@vkontakte/modules/vkontakte-user/vkontakte-user.service';
-import { VkontakteService } from '@vkontakte/vkontakte.service';
+import { VkontakteService } from '@vkontakte/services/vkontakte.service';
 
 import { TelegramTextHelper } from './helper/telegram-text.helper';
 import { TelegramUserService } from './modules/telegram-user/telegram-user.service';
@@ -27,7 +27,7 @@ export class TelegramTaskService {
      * Проходит по всем отслеживаемым пользователям и проверяет друзей
      * Смотрит новых/удаленных друзей и отсылает сообщение в телеграмм
      */
-    @Cron(CronExpression.EVERY_MINUTE)
+    @Cron(CronExpression.EVERY_10_MINUTES)
     async checkTrackedFriends(): Promise<void> {
         this.logger.log('Старт проверки отслеживаемых пользователей');
 

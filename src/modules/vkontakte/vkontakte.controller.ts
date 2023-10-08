@@ -4,7 +4,7 @@ import { ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { VkontakteFriendsGetResponseDto } from './dto/vkontakte-friends-get-response.dto';
 import { VkontakteGetUsersDto } from './dto/vkontakte-get-users.dto';
 import { VkontakteUserDto } from './dto/vkontakte-user.dto';
-import { VkontakteService } from './vkontakte.service';
+import { VkontakteService } from './services/vkontakte.service';
 
 @ApiTags('Vkontakte endpoints')
 @Controller('vkontakte')

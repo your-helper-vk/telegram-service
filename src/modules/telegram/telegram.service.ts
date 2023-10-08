@@ -1,9 +1,13 @@
-import { validateDto } from '@common/operation/validate-dto.operation';
+import { getEnv } from '@common/helpers/get-env.helper';
+import { validateDto } from '@common/operations/validate-dto.operation';
 import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { VkontakteUserID } from '@vkontakte/modules/vkontakte-user/domain/vkontakte-user.domain';
 import { VkontakteUserService } from '@vkontakte/modules/vkontakte-user/vkontakte-user.service';
-import { VkontakteService } from '@vkontakte/vkontakte.service';
+import { VkontakteService } from '@vkontakte/services/vkontakte.service';
 import { BotCommand, Message } from 'node-telegram-bot-api';
+import TelegramBot = require('node-telegram-bot-api');
+import { telegramConfig } from 'src/configs/telegram.config';
 
 import { TelegramMessage, TelegramReplyMarkup } from './constants/telegram';
 import { TelegramTextHelper } from './helper/telegram-text.helper';
@@ -14,11 +18,11 @@ import { TelegramTrackedVkUserService } from './modules/telegram-tracked-user/te
 import { TelegramUserID } from './modules/telegram-user/domain/telegram-user.domain';
 import { CreateTelegramUserDto } from './modules/telegram-user/dto/create-telegram-user.dto';
 import { TelegramUserService } from './modules/telegram-user/telegram-user.service';
-import { telegramBot } from './telegram.bot';
 
 @Injectable()
 export class TelegramService {
     private readonly logger = new Logger();
+    private readonly telegramBot: TelegramBot;
 
     constructor(
         private readonly telegramUserService: TelegramUserService,
@@ -26,7 +30,10 @@ export class TelegramService {
         private readonly telegramTrackedVkUserService: TelegramTrackedVkUserService,
         private readonly vkontakteUserService: VkontakteUserService,
         private readonly vkontakteService: VkontakteService,
+        private readonly configService: ConfigService,
     ) {
+        this.telegramBot = new TelegramBot(getEnv(this.configService, 'TG_BOT_TOKEN'), telegramConfig);
+
         this.initialize();
     }
 
@@ -36,9 +43,9 @@ export class TelegramService {
     }
 
     initializeTelegram(): void {
-        telegramBot.on('polling_error', this.logger.log);
+        this.telegramBot.on('polling_error', this.logger.log);
 
-        telegramBot.on('message', async (messageInfo: Message) => {
+        this.telegramBot.on('message', async (messageInfo: Message) => {
             const message = messageInfo.text;
             const chatIDInTelegram = messageInfo.chat.id;
             const userIDInTelegram = messageInfo.from.id;
@@ -209,11 +216,11 @@ export class TelegramService {
             { command: 'author', description: 'Об авторе' },
         ];
 
-        await telegramBot.setMyCommands(BOT_COMMANDS);
+        await this.telegramBot.setMyCommands(BOT_COMMANDS);
     }
 
     sendMessage(chatID: number, message: string): Promise<Message> {
-        return telegramBot.sendMessage(chatID, message, {
+        return this.telegramBot.sendMessage(chatID, message, {
             // eslint-disable-next-line camelcase
             parse_mode: 'MarkdownV2',
             // eslint-disable-next-line camelcase

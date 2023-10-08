@@ -1,4 +1,4 @@
-import { validateDto } from '@common/operation/validate-dto.operation';
+import { validateDto } from '@common/operations/validate-dto.operation';
 import { Body, Controller, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Message } from 'node-telegram-bot-api';

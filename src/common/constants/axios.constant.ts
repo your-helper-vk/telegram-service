@@ -1,0 +1,2 @@
+
+export const AXIOS_DEFAULT_TIMEOUT = 5000;

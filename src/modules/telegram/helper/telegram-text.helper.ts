@@ -1,4 +1,4 @@
-import { MarkDownHelper } from '@common/helper/markdown.helper';
+import { MarkDownHelper } from '@common/helpers/markdown.helper';
 import { VK_URL } from '@vkontakte/constants/vk.constant';
 import { VkontakteUserEntity } from '@vkontakte/modules/vkontakte-user/domain/vkontakte-user.entity';
 
