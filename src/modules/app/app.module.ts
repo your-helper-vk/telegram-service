@@ -1,4 +1,3 @@
-import { Stage } from '@common/constants/stage.enum';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
@@ -10,7 +9,7 @@ import { VkontakteModule } from '../vkontakte/vkontakte.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      ignoreEnvFile: process.env.STAGE !== Stage.Local,
+      envFilePath: [`.env.${process.env.STAGE}`],
       isGlobal: true,
     }),
     DatabaseModule,

@@ -1,5 +1,6 @@
 import { VkontakteFriendEntity } from '@vkontakte/modules/vkontakte-friend/domain/vkontakte-friend.entity';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 namespace Vkontakte {
     export type FriendsActualInfoEntity = {
         oldFriends: VkontakteFriendEntity[];

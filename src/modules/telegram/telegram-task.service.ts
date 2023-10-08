@@ -1,4 +1,4 @@
-import { getValueByKeyObjectFromMap, hasObjectInMap, UsersMapKeyType, UsersMapValueType } from '@common/helper/map.helper';
+import { getValueByKeyObjectFromMap, hasObjectInMap, UsersMapKeyType, UsersMapValueType } from '@common/helpers/map.helper';
 import { Injectable } from '@nestjs/common/decorators';
 import { Logger } from '@nestjs/common/services';
 import { Cron, CronExpression } from '@nestjs/schedule';

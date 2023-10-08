@@ -1,6 +1,5 @@
-import { getEnv } from '@common/helper/get-env.helper';
-import { validateDto } from '@common/operation/validate-dto.operation';
-import { telegramConfig } from '@config/telegram.config';
+import { getEnv } from '@common/helpers/get-env.helper';
+import { validateDto } from '@common/operations/validate-dto.operation';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { VkontakteUserID } from '@vkontakte/modules/vkontakte-user/domain/vkontakte-user.domain';
@@ -8,6 +7,7 @@ import { VkontakteUserService } from '@vkontakte/modules/vkontakte-user/vkontakt
 import { VkontakteService } from '@vkontakte/services/vkontakte.service';
 import { BotCommand, Message } from 'node-telegram-bot-api';
 import TelegramBot = require('node-telegram-bot-api');
+import { telegramConfig } from 'src/configs/telegram.config';
 
 import { TelegramMessage, TelegramReplyMarkup } from './constants/telegram';
 import { TelegramTextHelper } from './helper/telegram-text.helper';

@@ -1,5 +1,5 @@
 import { AXIOS_DEFAULT_TIMEOUT } from '@common/constants';
-import { getEnv } from '@common/helper/get-env.helper';
+import { getEnv } from '@common/helpers/get-env.helper';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Axios, { AxiosInstance, AxiosRequestConfig, Method } from 'axios';

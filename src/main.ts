@@ -1,5 +1,5 @@
 import { Stage } from '@common/constants/stage.enum';
-import { getEnv } from '@common/helper/get-env.helper';
+import { getEnv } from '@common/helpers/get-env.helper';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';

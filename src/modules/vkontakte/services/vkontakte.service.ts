@@ -1,7 +1,7 @@
-import { createVkontakteConfig } from '@config/vkontakte.config';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { plainToInstance } from 'class-transformer';
+import { createVkontakteConfig } from 'src/configs/vkontakte.config';
 import { Vkontakte } from 'types';
 
 import { VkontakteFriendsGetResponseDto } from '../dto/vkontakte-friends-get-response.dto';
